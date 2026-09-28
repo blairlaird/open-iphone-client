@@ -2,6 +2,12 @@ import copy
 import datetime as dt
 import hashlib
 import unittest
+import os
+import plistlib
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
 
 from prepare_ios_signing import signing_settings
 
@@ -37,6 +43,20 @@ class SigningChecks(unittest.TestCase):
         for change in invalid_profiles:
             with self.subTest(change=change), self.assertRaises((ValueError, KeyError)):
                 signing_settings({**copy.deepcopy(profile), **change}, "com.example.app", identity, now)
+
+        # Exercise the actual workflow boundary: immediate stdout and next-step env.
+        profile['ExpirationDate'] = dt.datetime.now() + dt.timedelta(days=1)
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            (target / 'profile.plist').write_bytes(plistlib.dumps(profile))
+            result = subprocess.run([
+                sys.executable, str(Path(__file__).with_name('prepare_ios_signing.py')),
+                str(target / 'profile.plist'), 'com.example.app', identity, directory
+            ], env={**os.environ, 'GITHUB_ENV': str(target / 'env')},
+                capture_output=True, text=True, check=True)
+            self.assertEqual(result.stdout.strip(), profile['UUID'])
+            self.assertIn('PROFILE_UUID=' + profile['UUID'], (target / 'env').read_text())
+            self.assertEqual(plistlib.loads((target / 'ExportOptions.plist').read_bytes())['method'], 'release-testing')
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@ This is a development tool, not a production distribution or OTA update service.
 
 Run **Build public runtime** in Actions. It compiles both simulator runtimes with
 no signing credentials. Simulator output cannot be installed on an iPhone.
-Workflows are manual, use standard `macos-15`, and refuse private repositories.
+Workflows are manual, use standard `macos-26`, and refuse private repositories.
 GitHub currently offers free standard runners for public repositories, subject to
 its service limits and terms. This is not a guarantee of unlimited capacity.
 There is no artifact upload for simulator checks and no paid runner configuration.
@@ -58,9 +58,11 @@ files produce no decrypted output. Existing output files are never overwritten.
 
 ## Daily work on Windows
 
-In your **private app's directory**, run `npm start -- --port 8081`. Open the
+In your **private app's directory**, run `npm start -- --port 8081 --scheme YOUR_SCHEME`
+(replace `YOUR_SCHEME` with the `CLIENT_SCHEME` configured above). Open the
 development launcher on the phone and enter the displayed LAN URL, or scan the
-QR code when the configured URL scheme matches. Use port 8082 for a second app.
+QR code. The explicit scheme is required because this public runtime's generated
+`exp+` scheme differs from your private project's slug. Use port 8082 for a second app.
 Both devices must be on the same reachable network. No Expo login is required.
 Restart Metro with `npm start -- --clear` and reconnect if the connection is stale.
 

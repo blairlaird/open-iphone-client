@@ -20,14 +20,14 @@ jobs:
   build:
     if: github.event.repository.private == false && github.ref == 'refs/heads/main'
     environment: ${{ inputs.runtime }}
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 45
     env:
       CI: '1'
       EXPO_NO_TELEMETRY: '1'
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_OPT_OUT_USAGE: '1'
-      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
       CONFIGURATION: Debug
       IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID }}
       CLIENT_SCHEME: ${{ vars.CLIENT_SCHEME }}

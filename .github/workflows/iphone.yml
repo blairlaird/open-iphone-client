@@ -90,7 +90,7 @@ jobs:
           bundle_id="$IOS_BUNDLE_ID"
           python3 ../scripts/prepare_ios_signing.py "$RUNNER_TEMP/profile.plist" "$bundle_id" "$identity" "$RUNNER_TEMP"
           mkdir -p "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
-          cp "$RUNNER_TEMP/signing.mobileprovision" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/open-client.mobileprovision"
+          cp "$RUNNER_TEMP/signing.mobileprovision" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
       - name: Archive and export signed iPhone app
         env:
           ARTIFACT_PASSWORD: ${{ secrets.ARTIFACT_PASSWORD }}
@@ -102,7 +102,7 @@ jobs:
           fastlane run update_code_signing_settings \
             path:"$project" use_automatic_signing:false \
             team_id:"$APPLE_TEAM_ID" code_sign_identity:"$SIGNING_CERTIFICATE" \
-            profile_uuid:"$PROFILE_UUID"
+            profile_name:"$PROFILE_UUID"
           xcodebuild -workspace "ios/$scheme.xcworkspace" -scheme "$scheme" \
             -configuration "$CONFIGURATION" -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/OpenClient.xcarchive" archive
@@ -122,4 +122,4 @@ jobs:
         run: |
           security delete-keychain "$RUNNER_TEMP/iphone-signing.keychain-db" 2>/dev/null || true
           rm -f "$RUNNER_TEMP/signing.p12" "$RUNNER_TEMP/signing.mobileprovision" \
-            "$RUNNER_TEMP/profile.plist" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/open-client.mobileprovision"
+            "$RUNNER_TEMP/profile.plist" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/$PROFILE_UUID.mobileprovision"

@@ -9,7 +9,7 @@ module.exports = variant => {
     name: `Open Client ${variant}`, slug: `open-client-${variant}`, version: '1.0.0',
     scheme, userInterfaceStyle: 'automatic',
     ios: { bundleIdentifier, supportsTablet: true, buildNumber: '1',
-      associatedDomains: process.env.ASSOCIATED_DOMAIN ? [`applinks:${process.env.ASSOCIATED_DOMAIN}`] : [],
+      ...(process.env.ASSOCIATED_DOMAIN ? { associatedDomains: [`applinks:${process.env.ASSOCIATED_DOMAIN}`] } : {}),
       infoPlist: { ITSAppUsesNonExemptEncryption: false,
         NSCameraUsageDescription: 'Allow the development project to use your camera.',
         NSMicrophoneUsageDescription: 'Allow the development project to use your microphone.',

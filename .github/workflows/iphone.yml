@@ -88,7 +88,7 @@ jobs:
           identity="$(security find-identity -v -p codesigning "$keychain" | sed -nE 's/^[[:space:]]*[0-9]+\) ([A-F0-9]{40}) .*/\1/p')"
           security cms -D -i "$RUNNER_TEMP/signing.mobileprovision" > "$RUNNER_TEMP/profile.plist"
           bundle_id="$IOS_BUNDLE_ID"
-          python3 ../scripts/prepare_ios_signing.py "$RUNNER_TEMP/profile.plist" "$bundle_id" "$identity" "$RUNNER_TEMP"
+          PROFILE_UUID="$(python3 ../scripts/prepare_ios_signing.py "$RUNNER_TEMP/profile.plist" "$bundle_id" "$identity" "$RUNNER_TEMP")"
           mkdir -p "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
           cp "$RUNNER_TEMP/signing.mobileprovision" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
       - name: Archive and export signed iPhone app

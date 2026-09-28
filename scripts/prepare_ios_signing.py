@@ -54,3 +54,4 @@ if __name__ == "__main__":
         target.write("APPLE_TEAM_ID=" + settings["teamID"] + "\n")
         target.write("PROFILE_UUID=" + settings["provisioningProfiles"][bundle_id] + "\n")
         target.write("SIGNING_CERTIFICATE=" + settings["signingCertificate"] + "\n")
+    print(settings["provisioningProfiles"][bundle_id])

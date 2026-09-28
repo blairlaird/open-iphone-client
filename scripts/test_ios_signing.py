@@ -18,7 +18,7 @@ class SigningChecks(unittest.TestCase):
         identity = hashlib.sha1(certificate).hexdigest()
         now = dt.datetime(2026, 9, 28, tzinfo=dt.timezone.utc)
         profile = {
-            "UUID": "12345678-1234-4123-8123-123456789012",
+            "UUID": "abcdef12-abcd-4abc-8abc-123456789abc",
             "ExpirationDate": dt.datetime(2027, 9, 28),
             "TeamIdentifier": ["ABCDEFGHIJ"],
             "ApplicationIdentifierPrefix": ["ABCDEFGHIJ"],
@@ -28,6 +28,7 @@ class SigningChecks(unittest.TestCase):
         }
         valid = signing_settings(profile, "com.example.app", identity, now)
         self.assertEqual(valid["method"], "release-testing")
+        self.assertEqual(valid["provisioningProfiles"]["com.example.app"], profile["UUID"])
         self.assertEqual(valid["signingCertificate"], identity.upper())
         self.assertFalse(valid["manageAppVersionAndBuildNumber"])
         invalid_profiles = [

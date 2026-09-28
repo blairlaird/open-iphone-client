@@ -32,7 +32,9 @@ def signing_settings(profile, bundle_id, certificate_sha1, now=None):
     hashes = [hashlib.sha1(cert).hexdigest().upper() for cert in profile.get("DeveloperCertificates", [])]
     if certificate_sha1.upper() not in hashes:
         raise ValueError("Signing certificate is not included in this provisioning profile.")
-    profile_id = str(uuid.UUID(profile["UUID"])).upper()
+    profile_id = profile["UUID"]
+    if str(uuid.UUID(profile_id)).lower() != profile_id.lower():
+        raise ValueError("Profile UUID must use canonical UUID format.")
     return {
         "method": "release-testing",
         "teamID": teams[0],

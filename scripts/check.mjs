@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { seal, unseal } from './seal.mjs';
+const require = createRequire(import.meta.url);
+const config = require('./config.cjs');
+const password = 'test-only-password-not-for-real-artifacts';
+const plain = Buffer.from('signed app fixture');
+const encrypted = seal(plain, password);
+assert.deepEqual(unseal(encrypted, password), plain);
+assert.throws(() => unseal(encrypted, password + 'wrong'));
+encrypted[encrypted.length - 1] ^= 1;
+assert.throws(() => unseal(encrypted, password));
+assert.throws(() => seal(plain, 'short'));
+for (const variant of ['field', 'customer']) assert.ok(config(variant).expo.plugins.length > 5);
+process.env.IOS_BUNDLE_ID = 'bad\nidentifier';
+assert.throws(() => config('field'));
+console.log('Config and artifact integrity checks passed');

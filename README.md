@@ -12,6 +12,38 @@ WebView, Expo Router, and Expo's development launcher. Their package locks are t
 native compatibility contract; match the resolved versions in your private app.
 This is a development tool, not a production distribution or OTA update service.
 
+## Shared tool and application adapters
+
+The shared checkout on this Windows workstation lives at
+`C:\Users\blair\Apps\Tools\open-iphone-client`, independently of any consuming app.
+Each app keeps its own source and uses a package script as its build adapter:
+
+```json
+"build:ios": "gh workflow run iphone.yml --repo blairlaird/open-iphone-client -f runtime=field -f profile=my-app"
+```
+
+Create the `my-app` GitHub environment first with the variables and secrets listed
+below. The profile selects the app's signing environment; runtime selects the native
+dependency set. Leaving profile blank preserves the existing field/customer environments.
+Use separate environments and artifact passwords for different apps. Do not reuse
+another app's certificate/profile blindly; the bundle ID and device scope must match.
+
+Before choosing a runtime, compare the app's resolved native dependency versions
+with that runtime's lockfile, and check its required native plugins and entitlements.
+An incompatible app needs a reviewed runtime directory and an entry in both workflow
+runtime lists, plus matching configuration in `scripts/config.cjs`. Do not copy private
+screens, backend URLs, assets or credentials into this public repository.
+
+Service Lions retains its config validation before dispatch and its existing field
+and customer profiles. This is a build-time command adapter; it does not install a
+runtime feature in the Service Lions business plugin catalog. Moving this checkout
+does not change remote build commands. Run local checks from the tool directory:
+
+```powershell
+node scripts/check.mjs
+python -m unittest discover -s scripts -p test_ios_signing.py
+```
+
 ## Free native compilation
 
 Run **Build public runtime** in Actions. It compiles both simulator runtimes with

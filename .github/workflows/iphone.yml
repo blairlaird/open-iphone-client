@@ -8,18 +8,22 @@ on:
         type: choice
         options: [field, customer]
         default: field
+      profile:
+        description: App signing environment (blank uses runtime name)
+        type: string
+        default: ''
 
 permissions:
   contents: read
 
 concurrency:
-  group: signed-${{ inputs.runtime }}
+  group: signed-${{ inputs.profile || inputs.runtime }}
   cancel-in-progress: false
 
 jobs:
   build:
     if: github.event.repository.private == false && github.ref == 'refs/heads/main'
-    environment: ${{ inputs.runtime }}
+    environment: ${{ inputs.profile || inputs.runtime }}
     runs-on: macos-26
     timeout-minutes: 45
     env:

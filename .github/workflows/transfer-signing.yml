@@ -1,0 +1,35 @@
+name: Encrypted signing transfer
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  transfer:
+    if: github.ref == 'refs/heads/main'
+    environment: field
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: Seal existing signing identity for owner migration
+        env:
+          ARTIFACT_PASSWORD: ${{ secrets.ARTIFACT_PASSWORD }}
+          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+        run: |
+          node --input-type=module <<'JS'
+          import { seal } from './scripts/seal.mjs';
+          import { writeFileSync } from 'node:fs';
+          const names = ['IOS_DISTRIBUTION_P12_BASE64', 'IOS_DISTRIBUTION_P12_PASSWORD'];
+          const values = Object.fromEntries(names.map(name => [name, process.env[name]]));
+          if (Object.values(values).some(value => !value)) throw Error('Missing signing identity');
+          writeFileSync('signing.sealed', seal(Buffer.from(JSON.stringify(values)), process.env.ARTIFACT_PASSWORD), {mode:0o600});
+          JS
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: encrypted-signing-transfer
+          path: signing.sealed
+          retention-days: 1
+          if-no-files-found: error

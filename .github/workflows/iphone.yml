@@ -35,6 +35,7 @@ jobs:
       CONFIGURATION: Debug
       IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID }}
       CLIENT_SCHEME: ${{ vars.CLIENT_SCHEME }}
+      APP_DISPLAY_NAME: ${{ vars.APP_DISPLAY_NAME }}
       APPLE_MERCHANT_ID: ${{ vars.APPLE_MERCHANT_ID }}
       ASSOCIATED_DOMAIN: ${{ vars.ASSOCIATED_DOMAIN }}
     defaults:

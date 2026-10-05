@@ -4,9 +4,11 @@ module.exports = variant => {
   const scheme = process.env.CLIENT_SCHEME || `openclient-${variant}`;
   if (!/^[a-z][a-z0-9+.-]*$/.test(scheme)) throw Error('Invalid CLIENT_SCHEME');
   const merchant = process.env.APPLE_MERCHANT_ID;
+  const displayName = process.env.APP_DISPLAY_NAME?.trim() || `Open Client ${variant}`;
+  if (displayName.length > 40 || /[\x00-\x1f\x7f]/.test(displayName)) throw Error('Invalid APP_DISPLAY_NAME');
   if (merchant && !/^merchant\.[A-Za-z0-9.-]+$/.test(merchant)) throw Error('Invalid APPLE_MERCHANT_ID');
   return { expo: {
-    name: `Open Client ${variant}`, slug: `open-client-${variant}`, version: '1.0.0',
+    name: displayName, slug: `open-client-${variant}`, version: '1.0.0',
     scheme, userInterfaceStyle: 'automatic',
     ios: { bundleIdentifier, supportsTablet: true, buildNumber: '1',
       ...(process.env.ASSOCIATED_DOMAIN ? { associatedDomains: [`applinks:${process.env.ASSOCIATED_DOMAIN}`] } : {}),

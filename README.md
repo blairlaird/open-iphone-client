@@ -61,6 +61,7 @@ Create GitHub environments named `field` and `customer`. In each environment set
 | --- | --- | --- |
 | Variable | IOS_BUNDLE_ID | Exact bundle ID covered by your existing Apple profile |
 | Variable | CLIENT_SCHEME | Your local project's URL scheme |
+| Variable | APP_DISPLAY_NAME | Optional distinct home-screen label (up to 40 characters); defaults to Open Client field/customer |
 | Variable | APPLE_MERCHANT_ID | Existing Apple Pay merchant ID, if required |
 | Variable | ASSOCIATED_DOMAIN | Associated domain hostname, if required |
 | Secret | IOS_DISTRIBUTION_P12_BASE64 | Base64 distribution certificate with private key |
